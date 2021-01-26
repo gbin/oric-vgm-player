@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+import binascii
+import sys
+import argparse
+HEADER = """
+        .fopt           compiler,"cc65 v 2.18 - Git 24c8e3f"
+        .setcpu         "6502"
+        .smart          on
+        .autoimport     on
+        .case           on
+        .debuginfo      off
+        .macpack        longbranch
+        .export         _vgmdata
+
+.segment        "DATA"
+
+_vgmdata:
+        .addr   STUFF
+
+.segment        "RODATA"
+
+STUFF:
+"""
+if __name__ == '__main__':
+    with open('BGM.vgm', 'rb') as f:
+        print(HEADER)
+        while True:
+            line_as_bin = f.read(16)
+            if not line_as_bin:
+                break
+            data = ','.join(f'${e:02x}' for e in line_as_bin)
+            print(f'     .byte {data}')
